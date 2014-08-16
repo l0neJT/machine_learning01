@@ -1,0 +1,49 @@
+# Predicting Exercise Quality
+## [John's Hopkins University Practical Machine Learning on Coursera][coursera_machine_learning]
+Logan J Travis
+2014-08-24
+
+### Executive Summary
+
+### Get Data
+Download training and test datasets to ./data/ if not present. Data provided as part of the [John's Hopkins University Practical Maching Learning][coursera_machine_learning] class on [Coursera][coursera] by [Groupware@LES][groupwareLES] from their [Human Activity Recognition research][data_source] project.
+
+```{r getData, echo = FALSE, }
+# Create data directory if missing
+if(!file.exists("./data/")) dir.create("./data/")
+
+# Download training dataset if missing
+# Writes download detail with url, file name, and timestamp
+# Prints file name to console
+destfile <- "./data/pml-training.csv"
+if(!file.exists(destfile)) {
+    url <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"
+    download.file(url = url, destfile = destfile, method = "curl")
+    downloadDetail <- data.frame(url = url, destfile = destfile, time = Sys.time())
+    write.csv(downloadDetail, file = "./data/pml-training-download-detail.txt")
+    print(paste("File downloaded to", destfile))
+} else print(paste("File found at", destfile))
+
+# Download testing dataset if missing
+# Writes download detail with url, file name, and timestamp
+# Prints file name to console
+destfile <- "./data/pml-testing.csv"
+if(!file.exists("./data/pml-testing.csv")) {
+    url <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"
+    download.file(url = url, destfile = destfile, method = "curl")
+    downloadDetail <- data.frame(url = url, destfile = destfile, time = Sys.time())
+    write.csv(downloadDetail, file = "./data/pml-testing-download-detail.txt")
+    print(paste("File downloaded to", destfile))    
+} else print(paste("File found at", destfile))
+
+# Cleanup variables
+rm(destfile)
+```
+
+### Links
+[coursera]: https://www.coursera.org/
+[coursera_machine_learning]: https://www.coursera.org/course/predmachlearn
+[groupwareLES]: http://groupware.les.inf.puc-rio.br/
+[data_source]: http://groupware.les.inf.puc-rio.br/har
+[data_train]: https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv
+[data_test]: https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv

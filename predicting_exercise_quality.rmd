@@ -8,6 +8,8 @@ Logan J Travis
 ### Get Data
 Download training and test datasets to ./data/ if not present. Data provided as part of the [John's Hopkins University Practical Maching Learning][coursera_machine_learning] class on [Coursera][coursera] by [Groupware@LES][groupwareLES] from their [Human Activity Recognition research][data_source] project.
 
+A word on the datasets --> interval @ 2.5s?
+
 ```{r getData, echo = FALSE, }
 # Create data directory if missing
 if(!file.exists("./data/")) dir.create("./data/")
@@ -40,10 +42,47 @@ if(!file.exists("./data/pml-testing.csv")) {
 rm(destfile)
 ```
 
+### Explore Training Dataset
+
+#### Explanation for "new" window rows
+The [paper][data_paper] submitted by [Groupware@LES][groupwareLES] details their sliding window method in section 5.1 Feature extraction and selection. They calculated statiscal measures for windows ranging from 0.5 to 2.5 seconds with 0.5 seconds of overlap (excluding 0.5 second window).
+
+However, the test data does not utlize such windows and includes only instantaneous measures. This does not align with the methodology explored in the paper though it does match their ultimate goal: continuous feedback to users. The models developed in this paper will attempt to acheive that goal so do not utilize the statistical measures as predictors.
+
+#### Read Training Dataset
+
+```{r readTrain, cache = TRUE, echo = FALSE}
+# Establish column classes to skip statistical meaures noted above
+# Sets 'X' column as character to prevent error
+colClasses <- c("character", "factor", rep("numeric", 2), "character", "factor", 
+                rep("numeric", 5), rep("NULL", 25), rep("numeric", 13), 
+                rep("NULL", 10), rep("numeric", 9), rep("NULL", 15), 
+                rep("numeric", 3), rep("NULL", 15), "numeric", rep("NULL", 10), 
+                rep("numeric", 12), rep("NULL", 15), "numeric", rep("NULL", 10), 
+                rep("numeric", 9), "factor")
+
+# Read training dataset
+# Converts 'X' column to numeric
+train <- read.csv("./data/pml-training.csv", colClasses = colClasses)
+train$X <- as.numeric(train$X)
+```
+
+#### Graph Measures with Covariance Over 0.80
+
+#### Explanation
+
+### Establish Model
+
+### Cross-Validate Using Left-One-Out
+Too few samples for random subsetting or K-fold.
+
+### Test
+
 ### Links
 [coursera]: https://www.coursera.org/
 [coursera_machine_learning]: https://www.coursera.org/course/predmachlearn
 [groupwareLES]: http://groupware.les.inf.puc-rio.br/
+[data_paper]: http://groupware.les.inf.puc-rio.br/public/papers/2013.Velloso.QAR-WLE.pdf
 [data_source]: http://groupware.les.inf.puc-rio.br/har
 [data_train]: https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv
 [data_test]: https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv

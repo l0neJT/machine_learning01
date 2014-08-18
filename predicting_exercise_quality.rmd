@@ -11,6 +11,9 @@ Download training and test datasets to ./data/ if not present. Data provided as 
 A word on the datasets --> interval @ 2.5s?
 
 ```{r getData, echo = FALSE, }
+# Load libraries
+library(caret)
+
 # Create data directory if missing
 if(!file.exists("./data/")) dir.create("./data/")
 
@@ -67,11 +70,40 @@ train <- read.csv("./data/pml-training.csv", colClasses = colClasses)
 train$X <- as.numeric(train$X)
 ```
 
-#### Graph Measures with Covariance Over 0.80
+#### Plot Features Grouped by User
+Summary
+
+<ul>
+    <li>Belt Features<br>
+    ```{r plotBelt, cache = TRUE, echo = FALSE}
+    featurePlot(x = train[, c(8:11, 60)], y = train[, 2], plot = "pairs")
+    ```
+    </li>
+    <li>Arm Features<br>
+    ```{r plotArm, cache = TRUE, echo = FALSE}
+    featurePlot(x = train[, c(21:24, 60)], y = train[, 2], plot = "pairs")
+    ```
+    </li>
+    <li>Dumbell Features<br>
+    ```{r plotDbell, cache = TRUE, echo = FALSE}
+    featurePlot(x = train[, c(34:37, 60)], y = train[, 2], plot = "pairs")
+    ```
+    </li>
+    <li>Forearm Features<br>
+    ```{r plotFore, cache = TRUE, echo = FALSE}
+    featurePlot(x = train[, c(47:50, 60)], y = train[, 2], plot = "pairs")
+    ```
+    </li>
+</ul>
 
 #### Explanation
 
 ### Establish Model
+
+```{r model, echo = FALSE}
+# Set seed
+set.seed(296785)
+```
 
 ### Cross-Validate Using Left-One-Out
 Too few samples for random subsetting or K-fold.

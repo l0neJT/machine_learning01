@@ -4,11 +4,10 @@ Logan J Travis
 2014-08-24
 
 ### Executive Summary
+**WRITE**
 
 ### Get Data
 Download training and test datasets to ./data/ if not present. Data provided as part of the [John's Hopkins University Practical Maching Learning][coursera_machine_learning] class on [Coursera][coursera] by [Groupware@LES][groupwareLES] from their [Human Activity Recognition research][data_source] project.
-
-A word on the datasets --> interval @ 2.5s?
 
 ```{r getData, echo = FALSE, }
 # Load libraries
@@ -46,6 +45,7 @@ rm(destfile)
 ```
 
 ### Explore Training Dataset
+**WRITE** Summary
 
 #### Explanation for "new" window rows
 The [paper][data_paper] submitted by [Groupware@LES][groupwareLES] details their sliding window method in section 5.1 Feature extraction and selection. They calculated statiscal measures for windows ranging from 0.5 to 2.5 seconds with 0.5 seconds of overlap (excluding 0.5 second window).
@@ -53,7 +53,6 @@ The [paper][data_paper] submitted by [Groupware@LES][groupwareLES] details their
 However, the test data does not utlize such windows and includes only instantaneous measures. This does not align with the methodology explored in the paper though it does match their ultimate goal: continuous feedback to users. The models developed in this paper will attempt to acheive that goal so do not utilize the statistical measures as predictors.
 
 #### Read Training Dataset
-
 ```{r readTrain, cache = TRUE, echo = FALSE}
 # Establish column classes to skip statistical meaures noted above
 # Sets 'X' column as character to prevent error
@@ -69,9 +68,10 @@ colClasses <- c("character", "factor", rep("numeric", 2), "character", "factor",
 train <- read.csv("./data/pml-training.csv", colClasses = colClasses)
 train$X <- as.numeric(train$X)
 ```
+**OUTPUT**
 
 #### Plot Features Grouped by User
-Summary
+**WRITE** Summary
 
 <ul>
     <li>Belt Features<br>
@@ -96,17 +96,35 @@ Summary
     </li>
 </ul>
 
-#### Explanation
+#### Testing a Tree <-- remove if too long
+**WRITE** Summary
+
+```{r testTree, echo = FALSE}
+treeModel <- train(train[, -c(1, 3:7)], train[, 60], method = "rpart")
+treePred <- predict(treeModel, train[, -c(1, 3:7)])
+print(confusionMatrix(treePred, train[, 60]))
+```
+
+**CODE** Boosted
+
+#### Comparison to Random-Forrest
+**CODE** --> This may take a long time
+
+#### Conclusions and Next Steps
+**WRITE**
+
+* Non-linear
+* Horrendous forrest performance (without boosting) on errors types C and D
+* Model-based approach might make sense with real-world testing data. However, prior probability for each error unavailable in dataset; errors created intentionally.
 
 ### Establish Model
+**WRITE** Summary
 
+**CODE** with cross-validation using left-one-out; too few samples for random subsetting or k-fold
 ```{r model, echo = FALSE}
 # Set seed
 set.seed(296785)
 ```
-
-### Cross-Validate Using Left-One-Out
-Too few samples for random subsetting or K-fold.
 
 ### Test
 

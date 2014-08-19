@@ -99,6 +99,42 @@ Forearm Features<br> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABUA
 </ul>
 
 </div>
+<div id="testing-a-tree-remove-if-too-long" class="section level4">
+<h4>Testing a Tree &lt;– remove if too long</h4>
+<p>Summary</p>
+<pre><code>## Loading required package: rpart</code></pre>
+<pre><code>## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction    A    B    C    D    E
+##          A 5580    0    0    0    0
+##          B    0 3797    0    0    0
+##          C    0    0    0    0    0
+##          D    0    0    0    0    0
+##          E    0    0 3422 3216 3607
+## 
+## Overall Statistics
+##                                         
+##                Accuracy : 0.662         
+##                  95% CI : (0.655, 0.668)
+##     No Information Rate : 0.284         
+##     P-Value [Acc &gt; NIR] : &lt;2e-16        
+##                                         
+##                   Kappa : 0.569         
+##  Mcnemar's Test P-Value : NA            
+## 
+## Statistics by Class:
+## 
+##                      Class: A Class: B Class: C Class: D Class: E
+## Sensitivity             1.000    1.000    0.000    0.000    1.000
+## Specificity             1.000    1.000    1.000    1.000    0.586
+## Pos Pred Value          1.000    1.000      NaN      NaN    0.352
+## Neg Pred Value          1.000    1.000    0.826    0.836    1.000
+## Prevalence              0.284    0.194    0.174    0.164    0.184
+## Detection Rate          0.284    0.194    0.000    0.000    0.184
+## Detection Prevalence    0.284    0.194    0.000    0.000    0.522
+## Balanced Accuracy       1.000    1.000    0.500    0.500    0.793</code></pre>
+</div>
 <div id="explanation" class="section level4">
 <h4>Explanation</h4>
 </div>

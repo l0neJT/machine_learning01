@@ -54,6 +54,9 @@ However, the test data does not utlize such windows and includes only instantane
 
 #### Read Training Dataset
 ```{r readTrain, cache = TRUE, echo = FALSE}
+# Set seed
+set.seed(296785)
+
 # Establish column classes to skip statistical meaures noted above
 # Sets 'X' column as character to prevent error
 colClasses <- c("character", "factor", rep("numeric", 2), "character", "factor", 
@@ -65,10 +68,18 @@ colClasses <- c("character", "factor", rep("numeric", 2), "character", "factor",
 
 # Read training dataset
 # Converts 'X' column to numeric
-train <- read.csv("./data/pml-training.csv", colClasses = colClasses)
-train$X <- as.numeric(train$X)
+dat <- read.csv("./data/pml-training.csv", colClasses = colClasses)
+dat$X <- as.numeric(dat$X)
+
+# Split into training and control
+# Limits columns to those used for predictions/results
+inTrn <- createDataPartition(dat$classe, p = 0.75, list = FALSE)
+trn <- dat[inTrn, -c(1, 3:7)]
+ctl <- dat[-inTrn, -c(1, 3:7)]
+
+# Print structur for 'trn' data
+print(str(trn))
 ```
-**OUTPUT**
 
 #### Plot Features Grouped by User
 **WRITE** Summary
@@ -76,22 +87,22 @@ train$X <- as.numeric(train$X)
 <ul>
     <li>Belt Features<br>
     ```{r plotBelt, cache = TRUE, echo = FALSE}
-    featurePlot(x = train[, c(8:11, 60)], y = train[, 2], plot = "pairs")
+    featurePlot(x = trn[, c(2:5, 54)], y = trn[, 1], plot = "pairs")
     ```
     </li>
     <li>Arm Features<br>
     ```{r plotArm, cache = TRUE, echo = FALSE}
-    featurePlot(x = train[, c(21:24, 60)], y = train[, 2], plot = "pairs")
+    featurePlot(x = trn[, c(15:18, 54)], y = trn[, 1], plot = "pairs")
     ```
     </li>
     <li>Dumbell Features<br>
     ```{r plotDbell, cache = TRUE, echo = FALSE}
-    featurePlot(x = train[, c(34:37, 60)], y = train[, 2], plot = "pairs")
+    featurePlot(x = trn[, c(28:31, 54)], y = trn[, 1], plot = "pairs")
     ```
     </li>
     <li>Forearm Features<br>
     ```{r plotFore, cache = TRUE, echo = FALSE}
-    featurePlot(x = train[, c(47:50, 60)], y = train[, 2], plot = "pairs")
+    featurePlot(x = trn[, c(41:44, 54)], y = trn[, 1], plot = "pairs")
     ```
     </li>
 </ul>
@@ -100,12 +111,17 @@ train$X <- as.numeric(train$X)
 **WRITE** Summary
 
 ```{r testTree, echo = FALSE}
-treeModel <- train(train[, -c(1, 3:7)], train[, 60], method = "rpart")
-treePred <- predict(treeModel, train[, -c(1, 3:7)])
-print(confusionMatrix(treePred, train[, 60]))
+# Set control for train function
+# Uses k-fold cross-validation
+tr <- trainControl(method = "cv")
+
+# Create tree model and print confusion matrix
+treeModel <- train(classe ~ ., data = trn, method = "rpart", trControl = tr)
+treePred <- predict(treeModel, trn)
+print(confusionMatrix(treePred, trn$classe))
 
 # Cleanup variables
-rm(treeModel, treePred)
+rm(tr, treeModel, treePred)
 ```
 
 #### Comparison to Random-Forrest
@@ -135,34 +151,7 @@ rm(treeModel, treePred)
 
 **CODE** with cross-validation using k-fold
 ```{r model, echo = FALSE}
-# Set seed
-set.seed(296785)
 
-# Set control for train function
-# Uses k-fold cross-validation
-tr <- trainControl(method = "cv")
-
-# Append column for 'ABE' versuse 'CD' classes
-train$split.classe <- factor(train$classe %in% c("C", "D"), labels = c("ABE", "CD"))
-
-# Model split between 'ABE' and 'CD'
-splitModel <- train(train[, -c(1, 3:7, 60)], train[, 61], method = "rpart", trControl = tr)
-splitPred <- predict(splitModel, train[, -c(1, 3:7, 60)])
-print(confusionMatrix(splitPred, train[, 61]))
-
-# Subset and model 'ABE' only
-abeTrain <- subset(train, split.classe == "ABE")
-abeTrain <- transform(abeTrain, classe = factor(abeTrain$classe))
-abeModel <- train(abeTrain[, -c(1, 3:7, 61)], abeTrain[, 60], method = "rpart", trControl = tr)
-abePred <- predict(abeModel, abeTrain[, -c(1, 3:7, 61)])
-print(confusionMatrix(abePred, abeTrain[, 60]))
-
-# Subset and model 'CD' only
-cdTrain <- subset(train, split.classe == "CD")
-cdTrain <- transform(cdTrain, classe = factor(cdTrain$classe))
-cdModel <- train(cdTrain[, -c(1, 3:7, 61)], cdTrain[, 60], method = "rpart", trControl = tr)
-cdPred <- predict(cdModel, cdTrain[, -c(1, 3:7, 61)])
-print(confusionMatrix(cdPred, cdTrain[, 60]))
 ```
 
 ### Test

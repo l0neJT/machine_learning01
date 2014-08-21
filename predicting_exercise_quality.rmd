@@ -96,19 +96,32 @@ train$X <- as.numeric(train$X)
     </li>
 </ul>
 
-#### Testing a Tree <-- remove if too long
+#### Testing Trees
 **WRITE** Summary
 
 ```{r testTree, echo = FALSE}
 treeModel <- train(train[, -c(1, 3:7)], train[, 60], method = "rpart")
 treePred <- predict(treeModel, train[, -c(1, 3:7)])
 print(confusionMatrix(treePred, train[, 60]))
+
+# Cleanup variables
+rm(treeModel, treePred)
 ```
 
-**CODE** Boosted
-
 #### Comparison to Random-Forrest
-**CODE** --> This may take a long time
+**CODE** --> Error Only one model should be specified in tuneGrid with no resampling
+# ```{r testRF, echo = FALSE}
+# # Set control for train function
+# # Uses no resampling to save time
+# tr <- trainControl(method = "none")
+# 
+# rfModel <- train(train[, -c(1, 3:7)], train[, 60], method = "rf", trControl = tr, verbose = TRUE)
+# rfPred <- predict(rfModel, train[, -c(1, 3:7)])
+# print(confusionMatrix(rfPred, train[, 60]))
+# 
+# # Cleanup variables
+# rm(tr, rfModel, rfPred)
+# ```
 
 #### Conclusions and Next Steps
 **WRITE**
@@ -120,10 +133,36 @@ print(confusionMatrix(treePred, train[, 60]))
 ### Establish Model
 **WRITE** Summary
 
-**CODE** with cross-validation using left-one-out; too few samples for random subsetting or k-fold
+**CODE** with cross-validation using k-fold
 ```{r model, echo = FALSE}
 # Set seed
 set.seed(296785)
+
+# Set control for train function
+# Uses k-fold cross-validation
+tr <- trainControl(method = "cv")
+
+# Append column for 'ABE' versuse 'CD' classes
+train$split.classe <- factor(train$classe %in% c("C", "D"), labels = c("ABE", "CD"))
+
+# Model split between 'ABE' and 'CD'
+splitModel <- train(train[, -c(1, 3:7, 60)], train[, 61], method = "rpart", trControl = tr)
+splitPred <- predict(splitModel, train[, -c(1, 3:7, 60)])
+print(confusionMatrix(splitPred, train[, 61]))
+
+# Subset and model 'ABE' only
+abeTrain <- subset(train, split.classe == "ABE")
+abeTrain <- transform(abeTrain, classe = factor(abeTrain$classe))
+abeModel <- train(abeTrain[, -c(1, 3:7, 61)], abeTrain[, 60], method = "rpart", trControl = tr)
+abePred <- predict(abeModel, abeTrain[, -c(1, 3:7, 61)])
+print(confusionMatrix(abePred, abeTrain[, 60]))
+
+# Subset and model 'CD' only
+cdTrain <- subset(train, split.classe == "CD")
+cdTrain <- transform(cdTrain, classe = factor(cdTrain$classe))
+cdModel <- train(cdTrain[, -c(1, 3:7, 61)], cdTrain[, 60], method = "rpart", trControl = tr)
+cdPred <- predict(cdModel, cdTrain[, -c(1, 3:7, 61)])
+print(confusionMatrix(cdPred, cdTrain[, 60]))
 ```
 
 ### Test

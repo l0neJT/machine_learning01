@@ -4,7 +4,9 @@ Logan J Travis
 2014-08-24
 
 ### Executive Summary
-**WRITE**
+Can the growing abundance of small, inexpensive sensor determine exercise quality? Many consumer devices measure quantity such as number of steps, distance traveled, and exercise repetitions. Through the use of random forest modeling, the same devices show incredibly high (>99%) predictive accuracy for exercise quality from instantaneous measurements.
+
+This paper expands upon data and analyses provided by [Groupware@LES][groupwareLES] to explore predictive models for exercise quality. Through exploration and comparison of multiple models, it concludes with a 99.4% accurate prediction algorithm for classifying standing dumbbell curls into five groups including one perfect execution and four common mistakes.
 
 ### Get Data
 Download training and test datasets to ./data/ if not present. Data provided as part of the [John's Hopkins University Practical Maching Learning][coursera_machine_learning] class on [Coursera][coursera] by [Groupware@LES][groupwareLES] from their [Human Activity Recognition research][data_source] project.
@@ -46,15 +48,15 @@ rm(destfile)
 ```
 
 ### Explore Training Dataset
-**WRITE** Summary
+The data collect by [Groupware@LES][groupwareLES] includes six users, five classes with one perfect execution of the standing bicep curl exercise, and 152 measures. With over 19,000 observations, an initial exploration of the data provides needed insight into model development.
 
 #### Explanation for "new" window rows
-The [paper][data_paper] submitted by [Groupware@LES][groupwareLES] details their sliding window method in section 5.1 Feature extraction and selection. They calculated statiscal measures for windows ranging from 0.5 to 2.5 seconds with 0.5 seconds of overlap (excluding 0.5 second window).
+The [paper][data_paper] submitted by [Groupware@LES][groupwareLES] details their sliding window method in section 5.1 Feature Extraction and Selection. They calculated statistical measures for windows ranging from 0.5 to 2.5 seconds with 0.5 seconds of overlap (excluding the 0.5 second window).
 
-However, the test data does not utlize such windows and includes only instantaneous measures. This does not align with the methodology explored in the paper though it does match their ultimate goal: continuous feedback to users. The models developed in this paper will attempt to acheive that goal so do not utilize the statistical measures as predictors.
+However, the test data does not utilize such windows and includes only instantaneous measures. This does not align with the methodology explored in the paper though it does match their ultimate goal: continuous feedback to users. The models developed in this experiment will attempt to achieve that goal so do not utilize the statistical measures as predictors.
 
 #### Reading/Spliting Data
-**WRITE** Summary
+Reading the training data excluding statistical measures yields 60 columns including observation number, time/date/window, and class ("classe" in the dataset). Split 75/25 into training and control, the clean data structure reduces to 54 columns:
 
 ```{r readTrain, cache = TRUE, echo = FALSE}
 # Set seed
@@ -85,7 +87,7 @@ print(str(trn))
 ```
 
 #### Ploting Features Grouped by User
-**WRITE** Summary
+The clean training data still includes nearly 15,000 observations. Feature plots below compare the primary features (excluding raw sensor output) for the four sensors on belt, arm, dumbbell, and forearm. No linear relationships appear though several categorical splits - especially by user - suggest a tree or random forest model will yield useful predictions.
 
 <ul>
     <li>Belt Features<br>
@@ -98,7 +100,7 @@ print(str(trn))
     featurePlot(x = trn[, c(15:18, 54)], y = trn[, 1], plot = "pairs")
     ```
     </li>
-    <li>Dumbell Features<br>
+    <li>Dumbbell Features<br>
     ```{r plotDbell, cache = TRUE, echo = FALSE}
     featurePlot(x = trn[, c(28:31, 54)], y = trn[, 1], plot = "pairs")
     ```
@@ -111,7 +113,9 @@ print(str(trn))
 </ul>
 
 #### Modeling Trees
-**WRITE** Summary
+Evaluating the possible predictive power of trees shows first that a standard tree suffers from poor accuracy. The high level of noise apparent in the graphs results in numerous errors. Bagging improves performance dramatically by averaging multiple trees. **Note:** both standard and bagged tree models used four K-folds for cross validation.
+
+The clear significance of the user_name feature warns of over-fitting; accuracy would drop for new users without calibration. It's difficult to estimate the error though the marked difference between standard and bagged trees - since an individual user may deviate widely from the "average" tree - indicates a potentially huge error.
 
 * Standard Tree (rpart)
     ```{r modelTree, echo = FALSE, cache = TRUE}
@@ -142,44 +146,55 @@ print(str(trn))
     ```
 
 #### Comparing to Random Forrest
-**WRITE* Summary
+Bagged trees create a highly (>99%) accurate model. Yet, random forest proves even better yielding only two errors when predicting against the training data. **Note:** cross-validation performed using out-of-bag with four repeats due to the improved performance over K-fold for random forest models.
+
+The model certainly over-fits for the given users. Real-world use would require calibration to individual users so the added processing time over bagged trees represents a minimal cost.
 
 ```{r modelRF, echo = FALSE}
 # Set control for train function
 # Uses out-of-bag cross-validation
 tr <- trainControl(method = "oob", number = 4, allowParallel = TRUE)
 
-# Create tree model and print confusion matrix
+# Create random forest model and print confusion matrix
 model <- train(classe ~ ., data = trn, method = "rf", trControl = tr)
-print(confusionMatrix(predict(model, trn), trn$classe)$overall)
+print(confusionMatrix(predict(model, trn), trn$classe)[c("table", "overall")])
+
+# Cleanup variables
+rm(tr, model)
 ```
 
 #### Determing Next Steps
-**WRITE**
+The final model will run a random forest given the insight gained from exploration:
 
-* Non-linear
-* Poor tree performance (without bagging) on all classes
-* Model-based approach might make sense with real-world testing data. However, prior probability for each error unavailable in dataset; errors created intentionally.
-* Use random forrest or bagged tree
+* All features show non-linear or weakly-linear (i.e. high variance) relationships.
+* Tree modeling performed poorly without bagging.
+* Model-based approaches might better fit individual users' tendencies toward specific mistakes. However, the training dataset lacks prior probabilities as each class of error was created intentionally.
+* The random forest model produced slightly better accuracy than bagged trees with little added cost considering the need to calibrate each user.
 
 ### Establish Final Model
-**WRITE** Summary
+**Note:** Cross-validation using out-of-bag increased to ten repeats.
 
-```{r modelFinal, echo = FALSE}
-# Calculated in 'testRF code block
+```{r modelFinal}
+# Set control for train function
+# Uses out-of-bag cross-validation
+tr <- trainControl(method = "oob", number = 10, allowParallel = TRUE)
+
+# Create random forest final model
+model <- train(classe ~ ., data = trn, method = "rf", trControl = tr)
+
+# Print final model
 print(model)
-plot(model$finalModel, main = "Final Model: Random Forest")
 ```
 
 ### Test Against Control Data
-**WRITE** Summary
+The final model yields a 99.4% accuracy. The drop estimates the out of sample error by predicting against a previously unused control subset from the overall training dataset. As noted previously, the real-world error when applied to new users will increase without calibration. The graph attempts to visualize model fit by counting the number results for each reference-prediction pair (log10 used to improve scaling against low error rate). Large counts fall along the matched reference-prediction pairs errors revealing which classes suffer prediction overlap.
 
-```{r modelTest, echo = FALSE}
+```{r modelTest}
 # Predict control results and print confusion matrix
 ctlPred <- predict(model, ctl)
 print(confusionMatrix(ctlPred, ctl$classe))
 
-# Plot accuracy by point size by taking log10(count)
+# Plot accuracy with point size = log10(count)
 ctlPlot <- ddply(data.frame(ctl, ctlPred), .(user_name, classe, ctlPred),
                  summarize, count = length(ctlPred))
 plot <- qplot(classe, ctlPred, data = ctlPlot, size = log10(count),
@@ -190,11 +205,16 @@ plot + geom_abline(slope = 1, intercept = 0, linetype = "dotted")
 rm(ctlPred, ctlPlot, plot)
 ```
 
+### Conclusion
+The final model can predict with incredible accuracy the error-class for standing dumbbell curls. Even more impressive, it does so using instantaneous measures not statistical summaries. Users could receive immediate feedback on the quality of their exercises.
 
-[coursera]: https://www.coursera.org/
-[coursera_machine_learning]: https://www.coursera.org/course/predmachlearn
-[groupwareLES]: http://groupware.les.inf.puc-rio.br/
-[data_paper]: http://groupware.les.inf.puc-rio.br/public/papers/2013.Velloso.QAR-WLE.pdf
-[data_source]: http://groupware.les.inf.puc-rio.br/har
-[data_train]: https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv
-[data_test]: https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv
+New user would need to calibrate their measures by performing each error under testing conditions. Though limiting - as is the processing time for the random forest model - this still provides an opportunity for a sensor-based approach to teaching proper weight-lifting form.
+
+<!--Links-->
+[coursera]: https://www.coursera.org/ "Coursera Main Page"
+[coursera_machine_learning]: https://www.coursera.org/course/predmachlearn "Coursera Practical Machine Learning Course Page"
+[groupwareLES]: http://groupware.les.inf.puc-rio.br/ "GroupwareLES Main Page"
+[data_paper]: http://groupware.les.inf.puc-rio.br/public/papers/2013.Velloso.QAR-WLE.pdf "GroupwareLES Paper: Qualitative Activity Recognition of Weight Lifting Exercises "
+[data_source]: http://groupware.les.inf.puc-rio.br/har "GroupwareLES Human Activity Recognition Page"
+[data_train]: https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv "GroupwareLES Weight Lifting Exercises Training Dataset"
+[data_test]: https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv "GroupwareLES Weight Lifting Exercises Testing Dataset"

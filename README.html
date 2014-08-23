@@ -56,22 +56,23 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <div id="machine_learning01" class="section level1">
 <h1>machine_learning01</h1>
 <div id="johns-hopkins-university-practical-machine-learning-on-courseracoursera_machine_learning" class="section level2">
-<h2><a href="https://www.coursera.org/course/predmachlearn">John’s Hopkins University Practical Machine Learning on Coursera</a></h2>
+<h2><a href="https://www.coursera.org/course/predmachlearn" title="Coursera Practical Machine Learning Course Page">John’s Hopkins University Practical Machine Learning on Coursera</a></h2>
 <p>Logan J Travis 2014-08-24</p>
 <div id="overview" class="section level3">
 <h3>Overview</h3>
+<p>Course assignment for <a href="https://www.coursera.org/course/predmachlearn" title="Coursera Practical Machine Learning Course Page">John’s Hopkins University Practical Machine Learning on Coursera</a>. Uses <a href="http://groupware.les.inf.puc-rio.br/har" title="GroupwareLES Human Activity Recognition Page">Weight Lifting Exercise Dataset</a> to create a prediction model for exercise quality.</p>
 </div>
 <div id="assignment-text" class="section level3">
 <h3>Assignment Text</h3>
 <div id="background" class="section level4">
 <h4>Background</h4>
-<p>Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement – a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. More information is available from the website here: see the section on the <a href="http://groupware.les.inf.puc-rio.br/har">Weight Lifting Exercise Dataset</a>.</p>
+<p>Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement – a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. More information is available from the website here: see the section on the <a href="http://groupware.les.inf.puc-rio.br/har" title="GroupwareLES Human Activity Recognition Page">Weight Lifting Exercise Dataset</a>.</p>
 </div>
 <div id="data" class="section level4">
 <h4>Data</h4>
-<p>The training data for this project are available here: <a href="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv">Training Dataset</a></p>
-<p>The test data are available here: <a href="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv">Testing Dataset</a></p>
-<p>The data for this project come from this <a href="http://groupware.les.inf.puc-rio.br/har">source</a>. If you use the document you create for this class for any purpose please cite them as they have been very generous in allowing their data to be used for this kind of assignment.</p>
+<p>The training data for this project are available here: <a href="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv" title="GroupwareLES Weight Lifting Exercises Training Dataset">Training Dataset</a></p>
+<p>The test data are available here: <a href="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv" title="GroupwareLES Weight Lifting Exercises Testing Dataset">Testing Dataset</a></p>
+<p>The data for this project come from this <a href="http://groupware.les.inf.puc-rio.br/har" title="GroupwareLES Human Activity Recognition Page">source</a>. If you use the document you create for this class for any purpose please cite them as they have been very generous in allowing their data to be used for this kind of assignment.</p>
 </div>
 <div id="submission-requirement" class="section level4">
 <h4>Submission Requirement</h4>
@@ -91,18 +92,36 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <div id="section" class="section level4">
 <h4>./</h4>
 <ul>
-<li>README.md this file providing background on the assignment and associated files.</li>
+<li>README.md (and .html): this file providing background on the assignment and associated files</li>
+<li>predicting_exercise_quality.rmd (and .html): assignment write-up</li>
+<li>machine_learning01.Rproj: R Studio project file</li>
 </ul>
 </div>
 <div id="data-1" class="section level4">
 <h4>./data/</h4>
 <ul>
-<li></li>
+<li>pml-training.csv: training dataset</li>
+<li>pml-training-download-detail.txt: text file with download source and date/time for training dataset</li>
+<li>pml-testing.csv: testing dataset</li>
+<li>pml-testing-download-detail.txt: text file with download source and date/time for testing dataset</li>
 </ul>
 </div>
+<div id="predicting_exercise_quality_cache" class="section level4">
+<h4>./predicting_exercise_quality_cache/</h4>
+<p>Cached data for knitting predicting_exercise_quality.rmd to html</p>
 </div>
-<div id="links" class="section level3">
-<h3>Links</h3>
+<div id="predicting_exercise_quality_files" class="section level4">
+<h4>./predicting_exercise_quality_files/</h4>
+<p>Output files (notably plot images) for predicting_exercise_quality.html</p>
+</div>
+<div id="test_results" class="section level4">
+<h4>./test_results/</h4>
+<ul>
+<li>problem_id_#.txt: text files for predicted class across 20 problems in test dataset; uploaded individually to satisfy assignment submission requirements</li>
+<li>test_results_timestamp.txt: text file with date/time for predictions</li>
+</ul>
+<!--Links-->
+</div>
 </div>
 </div>
 </div>

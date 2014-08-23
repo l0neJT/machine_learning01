@@ -4,6 +4,7 @@ Logan J Travis
 2014-08-24
 
 ### Overview
+Course assignment for [John's Hopkins University Practical Machine Learning on Coursera][coursera_machine_learning]. Uses [Weight Lifting Exercise Dataset][data_source] to create a prediction model for exercise quality.
 
 ### Assignment Text
 #### Background
@@ -27,13 +28,28 @@ Due to security concerns with the exchange of R code, your code will not be run 
 
 ### Files
 #### ./
-* README.md this file providing background on the assignment and associated files.
+* README.md (and .html): this file providing background on the assignment and associated files
+* predicting_exercise_quality.rmd (and .html): assignment write-up
+* machine_learning01.Rproj: R Studio project file
 
 #### ./data/
-*
+* pml-training.csv: training dataset
+* pml-training-download-detail.txt: text file with download source and date/time for training dataset
+* pml-testing.csv: testing dataset
+* pml-testing-download-detail.txt: text file with download source and date/time for testing dataset
 
-### Links
-[coursera_machine_learning]: https://www.coursera.org/course/predmachlearn
-[data_source]: http://groupware.les.inf.puc-rio.br/har
-[data_train]: https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv
-[data_test]: https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv
+#### ./predicting_exercise_quality_cache/
+Cached data for knitting predicting_exercise_quality.rmd to html
+
+#### ./predicting_exercise_quality_files/
+Output files (notably plot images) for predicting_exercise_quality.html
+
+#### ./test_results/
+* problem_id_#.txt: text files for predicted class across 20 problems in test dataset; uploaded individually to satisfy assignment submission requirements
+* test_results_timestamp.txt: text file with date/time for predictions
+
+<!--Links-->
+[coursera_machine_learning]: https://www.coursera.org/course/predmachlearn "Coursera Practical Machine Learning Course Page"
+[data_source]: http://groupware.les.inf.puc-rio.br/har "GroupwareLES Human Activity Recognition Page"
+[data_train]: https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv "GroupwareLES Weight Lifting Exercises Training Dataset"
+[data_test]: https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv "GroupwareLES Weight Lifting Exercises Testing Dataset"

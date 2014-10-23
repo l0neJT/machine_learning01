@@ -18,10 +18,28 @@ dat <- read.csv("./data/pml-source.csv", colClasses = colClasses, na.strings = c
 
 # Split into training and control
 # Limits columns to those used for predictions/results
-inTrn <- createDataPartition(dat$classe, p = 0.75, list = FALSE)
+inTrn <- createDataPartition(dat$classe, p = 0.75, list = F)
 trn <- dat[inTrn, ]
 ctl <- dat[-inTrn, ]
 
-# Identify and copy rows with statistical measures
-trnStat <- trn$new_window == "yes"
-ctlStat <- ctl$new_window == "yes"
+# Identify rows with statistical measures
+trnStat <- row(trn)[trn$new_window == "yes", 1]
+ctlStat <- row(ctl)[ctl$new_window == "yes", 1]
+
+# grep columns with statistacal measures
+statCol <- grep("amplitude_|avg_|kurtosis_|max_|min_|skewness_|stddev_|var_", names(trn))
+
+# Determine calumns with all NAs
+allNAs <- col(trn)[1, colSums(is.na(trn[trnStat, ])) == length(trnStat)]
+
+# Identify columns for non-statistical and statistical measures
+noStat <- col(trn)[1, -c(2:7, statCol)]
+statOnly <- c(1, statCol[!statCol %in% allNAs], 159)
+
+# Set control for train function
+# Uses out-of-bag cross-validation
+tr <- trainControl(method = "oob", number = 10, allowParallel = T, verboseIter = T)
+
+# Create random forest model for both non-statistical and statistical measures
+model <- train(classe ~ ., data = trn[, noStat], method = "rf", trControl = tr)
+modelStat <- train(classe ~ ., data = trn[trnStat, statOnly], method = "rf", trControl = tr)

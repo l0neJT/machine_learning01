@@ -43,3 +43,6 @@ tr <- trainControl(method = "oob", number = 10, allowParallel = T, verboseIter =
 # Create random forest model for both non-statistical and statistical measures
 model <- train(classe ~ ., data = trn[, noStat], method = "rf", trControl = tr)
 modelStat <- train(classe ~ ., data = trn[trnStat, statOnly], method = "rf", trControl = tr)
+
+# Statistical model works but predictions dropped for rows with NAs
+# Significantly reduces value/accuracy
